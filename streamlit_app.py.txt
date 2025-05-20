@@ -1,0 +1,24 @@
+import streamlit as st
+import pickle
+import numpy as np
+
+# Load trained model
+model = pickle.load(open("model.pkl", "rb"))
+
+st.title("🚦 Accident Severity Predictor")
+st.markdown("Predict accident severity based on number of vehicles involved in an accident.")
+
+# Input from user
+num_vehicles = st.slider("Select number of vehicles involved", 1, 20, 2)
+
+if st.button("Predict"):
+    input_data = np.array([[num_vehicles]])
+    prediction = model.predict(input_data)
+
+    # Optional mapping — since you used regression, map the prediction to closest class
+    severity_map = {0: "Slight", 1: "Serious", 2: "Fatal"}
+    predicted_class = int(round(prediction[0]))
+    severity_label = severity_map.get(predicted_class, "Unknown")
+
+    st.success(f"🔍 Predicted Severity: {severity_label}")
+    st.write(f"Raw model output: {prediction[0]:.2f}")
